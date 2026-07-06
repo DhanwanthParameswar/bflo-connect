@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elevator — Match with Buffalo Startups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="app">
+  <header class="top">
+    <div class="brandrow">
+      <div class="wordmark">ELEVATOR<span class="dot">.</span></div>
+      <button class="savedbtn" id="savedBtn">
+        ♥ MATCHES <span class="n" id="savedCount">0</span>
+      </button>
+    </div>
+    <div class="tagline" id="taglineText">Buffalo & WNY's startup matchmaker.</div>
+
+    <div class="subnav" id="seekerSubnav" style="display:none;">
+      <div class="subbtn on" data-view="home">Home</div>
+      <div class="subbtn" data-view="discover">Discover</div>
+    </div>
+
+    <div id="discoverControls" style="display:none;">
+      <div class="statstrip" id="statStrip"></div>
+      <div class="controls">
+        <div class="searchrow">
+          <div class="searchbox">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="searchInput" type="text" placeholder="Search role, company, or tag…">
+          </div>
+          <button class="locbtn" id="locBtn">📍 NEAR ME</button>
+          <button class="filterbtn" id="filterBtn" title="Advanced filters">⚙</button>
+        </div>
+        <div class="chiprow" id="industryChips"></div>
+        <div class="sortrow">
+          <span class="sortlabel">Sort</span>
+          <div class="chip on" data-sort="rec">Recommended</div>
+          <div class="chip" data-sort="dist">Nearest</div>
+          <div class="chip" data-sort="growth">Fastest growing</div>
+          <div class="chip" data-sort="new">Newest</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== LANDING / PERSONA CHOOSER ===== -->
+  <div class="landingwrap" id="landingView"></div>
+
+  <!-- ===== HOME VIEW (talent) ===== -->
+  <div class="homewrap" id="homeView" style="display:none;"></div>
+
+  <!-- ===== DISCOVER VIEW (talent, swipe deck) ===== -->
+  <div class="stage" id="discoverView" style="display:none;">
+    <div class="viewtoggle">
+      <div class="vtbtn on" data-vt="swipe">Swipe</div>
+      <div class="vtbtn" data-vt="feed">Scroll feed</div>
+    </div>
+    <div class="deck" id="deck"></div>
+    <div class="feedwrap" id="feedWrap" style="display:none;"></div>
+    <div class="actions" id="deckActions">
+      <div class="actionbtn undo" id="undoBtn" title="Rewind">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>
+      </div>
+      <div class="actionbtn pass" id="passBtn" title="Pass">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+      <div class="actionbtn info" id="infoBtn" title="Full profile">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      </div>
+      <div class="actionbtn save" id="saveBtn" title="Save">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== COMPANY VIEW ===== -->
+  <div class="companywrap" id="companyView" style="display:none;"></div>
+</div>
+
+<div class="filter-backdrop" id="filterBackdrop"></div>
+<div class="filter-modal" id="filterModal">
+  <div class="fm-head"><h3>Filters</h3><div class="sheet-close" id="filterClose" style="position:static;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </div></div>
+  <div class="fm-body" id="filterBody"></div>
+</div>
+
+<div class="match-overlay" id="matchOverlay"></div>
+
+<div class="sheet-backdrop" id="sheetBackdrop"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-grip"></div>
+  <div class="sheet-close" id="sheetClose">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </div>
+  <div class="sheet-scroll" id="sheetContent"></div>
+</div>
+
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3>Your matches</h3>
+    <div class="sheet-close" id="drawerClose" style="position:static;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+  </div>
+  <div class="drawer-list" id="drawerList"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
